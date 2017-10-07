@@ -108,7 +108,7 @@ Item {
                 width: height
                 height: compactRoot.height
                 Layout.preferredWidth: height
-                source: visible ? ("settings") : ""
+                source: visible ? ("settings-configure") : ""
                 visible: root.showSett
             }
 
@@ -208,7 +208,7 @@ Item {
             ListDelegate {
                 id: currentUserItem
                 text: root.displayedName
-                subText: i18n("Current user")
+                subText: i18n("<i>Current user</i>")
                 icon: "user-identity"
                 interactive: false
                 interactiveIcon: true
