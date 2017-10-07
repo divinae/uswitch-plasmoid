@@ -180,7 +180,7 @@ Item {
             ListDelegate {
                 id: aboutComputerItem
                 text: i18n("About This Computer")
-                icon: "stock_about"
+                icon: "help-about"
                 highlight: delegateHighlight
                 onClicked: {
                     kRun.openUrl(apps.data["org.kde.kinfocenter.desktop"].entryPath)
@@ -190,7 +190,7 @@ Item {
             ListDelegate {
                 id: systemSettingsItem
                 text: i18n("System Settings")
-                icon: "settings"
+                icon: "settings-configure"
                 highlight: delegateHighlight
                 onClicked: {
                     kRun.openUrl(apps.data["systemsettings.desktop"].entryPath)
