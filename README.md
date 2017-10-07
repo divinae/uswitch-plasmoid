@@ -1,4 +1,4 @@
-# uswitch
+# USwitch
 Modified version of User Switch plasmoid
 
 
