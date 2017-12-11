@@ -21,6 +21,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0 as QtControls
 import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.2
 
 ColumnLayout {
     id: appearancePage
@@ -29,6 +30,7 @@ ColumnLayout {
     property bool cfg_showName
     property bool cfg_showFullName
     property bool cfg_showSett
+    property alias cfg_icon: icon.text
     property alias cfg_showTechnicalInfo: showTechnicalInfoCheck.checked
 
     QtControls.GroupBox {
@@ -65,9 +67,10 @@ ColumnLayout {
         QtControls.ExclusiveGroup {
             id: layoutEg
             onCurrentChanged: {
-                cfg_showSett = (current === showOnlySettRadio || current === showBothRadio)
+                cfg_showSett = (current === showOnlySettRadio)
                 cfg_showName = (current === showOnlyNameRadio || current === showBothRadio)
                 cfg_showFace = (current === showOnlyFaceRadio || current === showBothRadio)
+                cfg_settIcon = setIcon.text
             }
         }
 
@@ -92,7 +95,7 @@ ColumnLayout {
                 id: showOnlySettRadio
                 Layout.fillWidth: true
                 exclusiveGroup: layoutEg
-                text: i18n("Show only settings icon")
+                text: i18n("Show only icon")
                 checked: !cfg_showName && !cfg_showFace && cfg_showSett
             }
 
@@ -108,6 +111,34 @@ ColumnLayout {
                 id: showTechnicalInfoCheck
                 text: i18n("Show technical information about sessions")
             }
+
+            QtControls.Label {
+                        text: i18n('Icon:')
+                    }
+
+            RowLayout {
+                QtControls.TextField {
+                    id: icon
+                    implicitWidth: 300
+                }
+
+                QtControls.Button {
+                    iconName: 'folder'
+                    onClicked: {
+                        iconDialog.open()
+                    }
+                }
+            }
+        }
+    }
+
+    FileDialog {
+        id: iconDialog
+        title: 'Please choose an image file'
+        folder: '/usr/share/icons/breeze/'
+        nameFilters: ['Image files (*.png *.jpg *.xpm *.svg *.svgz)', 'All files (*)']
+        onAccepted: {
+            icon.text = iconDialog.fileUrl
         }
     }
 

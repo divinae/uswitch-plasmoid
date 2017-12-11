@@ -40,6 +40,7 @@ Item {
     readonly property bool showFace: plasmoid.configuration.showFace
     readonly property bool showSett: plasmoid.configuration.showSett
     readonly property bool showName: plasmoid.configuration.showName
+    property var iconSett: plasmoid.configuration.icon
 
     readonly property bool showFullName: plasmoid.configuration.showFullName
 
@@ -108,7 +109,7 @@ Item {
                 width: height
                 height: compactRoot.height
                 Layout.preferredWidth: height
-                source: visible ? ("settings-configure") : ""
+                source: visible ? (iconSett || "avatar-default-symbolic") : ""
                 visible: root.showSett
             }
 
