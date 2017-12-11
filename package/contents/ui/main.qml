@@ -297,7 +297,7 @@ Item {
                 id: suspendButton
                 text: i18n("Suspend")
                 highlight: delegateHighlight
-                icon: "system-suspend"
+                icon: "system-log-out"
                 onClicked: pmEngine.performOperation("suspend")
             }
 
