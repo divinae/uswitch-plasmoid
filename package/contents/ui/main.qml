@@ -56,10 +56,10 @@ Item {
     Kio.KRun { id: kRun }
 
     PlasmaCore.DataSource {
-            id: apps
-            engine: "apps"
-            connectedSources: ["org.kde.kinfocenter.desktop","systemsettings.desktop"]
-        }
+        id: apps
+        engine: "apps"
+        connectedSources: ["org.kde.kinfocenter.desktop","systemsettings.desktop", "org.kde.ksysguard.desktop"]
+    }
 
     Binding {
         target: plasmoid
@@ -169,7 +169,7 @@ Item {
             id: column
 
             // there doesn't seem a more sensible way of getting this due to the expanding ListView
-            readonly property int contentHeight: aboutComputerItem.height + systemSettingsItem.height + 2*separatorItem.height + currentUserItem.height + userList.contentHeight
+            readonly property int contentHeight: aboutComputerItem.height + systemSettingsItem.height + systemMonitorItem.height + 2*separatorItem.height + currentUserItem.height + userList.contentHeight
                                                + (newSessionButton.visible ? newSessionButton.height : 0)
                                                + (lockScreenButton.visible ? lockScreenButton.height : 0)
                                                + suspendButton.height + leaveButton.height
@@ -185,6 +185,16 @@ Item {
                 highlight: delegateHighlight
                 onClicked: {
                     kRun.openUrl(apps.data["org.kde.kinfocenter.desktop"].entryPath)
+                }
+            }
+
+            ListDelegate {
+                id: systemMonitorItem
+                text: i18n("System Monitor")
+                icon: "process-stop-symbolic"
+                highlight: delegateHighlight
+                onClicked: {
+                    kRun.openUrl(apps.data["org.kde.ksysguard.desktop"].entryPath)
                 }
             }
 
