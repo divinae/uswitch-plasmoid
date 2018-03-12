@@ -27,7 +27,6 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kcoreaddons 1.0 as KCoreAddons // kuser
 import org.kde.kquickcontrolsaddons 2.0 // kcmshell
-import org.kde.kio 1.0 as Kio
 
 import org.kde.plasma.private.sessions 2.0 as Sessions
 
@@ -53,12 +52,31 @@ Item {
     Plasmoid.toolTipTextFormat: Text.StyledText
     Plasmoid.toolTipSubText: i18n("You are logged in as <b>%1</b>", displayedName)
 
-    Kio.KRun { id: kRun }
-
     PlasmaCore.DataSource {
-        id: apps
-        engine: "apps"
-        connectedSources: ["org.kde.kinfocenter.desktop","systemsettings.desktop", "org.kde.ksysguard.desktop"]
+        id: executable
+        engine: "executable"
+        connectedSources: []
+        property var callbacks: ({})
+        onNewData: {
+            var stdout = data["stdout"]
+
+            if (callbacks[sourceName] !== undefined) {
+                callbacks[sourceName](stdout);
+            }
+
+            exited(sourceName, stdout)
+            disconnectSource(sourceName) // cmd finished
+        }
+
+        function exec(cmd, onNewDataCallback) {
+            if (onNewDataCallback !== undefined){
+                callbacks[cmd] = onNewDataCallback
+            }
+            connectSource(cmd)
+
+        }
+        signal exited(string sourceName, string stdout)
+
     }
 
     Binding {
@@ -184,7 +202,7 @@ Item {
                 icon: "help-about"
                 highlight: delegateHighlight
                 onClicked: {
-                    kRun.openUrl(apps.data["org.kde.kinfocenter.desktop"].entryPath)
+                    executable.exec("kinfocenter");
                 }
             }
 
@@ -194,7 +212,7 @@ Item {
                 icon: "process-stop-symbolic"
                 highlight: delegateHighlight
                 onClicked: {
-                    kRun.openUrl(apps.data["org.kde.ksysguard.desktop"].entryPath)
+                    executable.exec("ksysguard");
                 }
             }
 
@@ -204,7 +222,7 @@ Item {
                 icon: "settings-configure"
                 highlight: delegateHighlight
                 onClicked: {
-                    kRun.openUrl(apps.data["systemsettings.desktop"].entryPath)
+                    executable.exec("systemsettings5");
                 }
             }
 
