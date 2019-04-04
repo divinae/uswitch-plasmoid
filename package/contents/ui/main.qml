@@ -209,7 +209,7 @@ Item {
             ListDelegate {
                 id: systemMonitorItem
                 text: i18n("System Monitor")
-                icon: "process-stop-symbolic"
+                icon: "view-process-tree"
                 highlight: delegateHighlight
                 onClicked: {
                     executable.exec("ksysguard");
