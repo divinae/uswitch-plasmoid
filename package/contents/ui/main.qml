@@ -325,7 +325,7 @@ Item {
                 id: suspendButton
                 text: i18n("Suspend")
                 highlight: delegateHighlight
-                icon: "system-log-out"
+                icon: "system-suspend"
                 onClicked: pmEngine.performOperation("suspend")
             }
 
@@ -333,7 +333,7 @@ Item {
                 id: leaveButton
                 text: i18nc("Show a dialog with options to logout/shutdown/restart", "Leave...")
                 highlight: delegateHighlight
-                icon: "system-shutdown"
+                icon: "system-log-out"
                 onClicked: pmEngine.performOperation("requestShutDown")
             }
         }
