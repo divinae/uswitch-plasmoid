@@ -67,8 +67,8 @@ ColumnLayout {
         QtControls.ExclusiveGroup {
             id: layoutEg
             onCurrentChanged: {
-                cfg_showSett = (current === showOnlySettRadio)
-                cfg_showName = (current === showOnlyNameRadio || current === showBothRadio)
+                cfg_showSett = (current === showOnlySettRadio || current === showIconAndNameRadio)
+                cfg_showName = (current === showOnlyNameRadio || current === showBothRadio || current === showIconAndNameRadio)
                 cfg_showFace = (current === showOnlyFaceRadio || current === showBothRadio)
                 cfg_settIcon = setIcon.text
             }
@@ -97,6 +97,14 @@ ColumnLayout {
                 exclusiveGroup: layoutEg
                 text: i18n("Show only icon")
                 checked: !cfg_showName && !cfg_showFace && cfg_showSett
+            }
+
+            QtControls.RadioButton {
+                id: showIconAndNameRadio
+                Layout.fillWidth: true
+                exclusiveGroup: layoutEg
+                text: i18n("Show both icon and name")
+                checked: cfg_showName && !cfg_showFace && cfg_showSett
             }
 
             QtControls.RadioButton {
