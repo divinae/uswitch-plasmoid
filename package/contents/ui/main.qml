@@ -27,6 +27,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kcoreaddons 1.0 as KCoreAddons // kuser
 import org.kde.kquickcontrolsaddons 2.0 // kcmshell
+import org.kde.kirigami 2.13 as Kirigami
 
 import org.kde.plasma.private.sessions 2.0 as Sessions
 
@@ -113,11 +114,10 @@ Item {
             anchors.centerIn: parent
             spacing: units.smallSpacing
 
-            PlasmaCore.IconItem {
+            Kirigami.Avatar {
                 id: icon
-                width: height
+                width: compactRoot.height
                 height: compactRoot.height
-                Layout.preferredWidth: height
                 source: visible ? (kuser.faceIconUrl || "user-identity") : ""
                 visible: root.showFace
             }
