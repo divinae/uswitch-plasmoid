@@ -170,8 +170,8 @@ Item {
 
         Connections {
             target: plasmoid
-            onExpandedChanged: {
-                if (plasmoid.expanded) {
+            function onExpandedChanged(expanded) {
+                if (expanded) {
                     sessionsModel.reload()
                 }
             }
