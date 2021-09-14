@@ -231,7 +231,7 @@ Item {
             Rectangle {
                 id: separatorItem
                 Layout.alignment: Qt.AlignCenter
-                width: parent
+                width: parent.width
                 height: PlasmaCore.Units.smallSpacing*2
                 opacity: 0
             }
@@ -308,7 +308,7 @@ Item {
             Rectangle {
                 id: separatorItem3
                 Layout.alignment: Qt.AlignCenter
-                width: parent
+                width: parent.width
                 height: PlasmaCore.Units.smallSpacing*2
                 opacity: 0
             }
