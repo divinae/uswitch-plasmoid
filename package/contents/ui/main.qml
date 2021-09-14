@@ -17,6 +17,7 @@
  */
 
 import QtQuick 2.2
+import QtQml 2.14
 import QtQuick.Controls 1.1 as QtControls
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
@@ -86,6 +87,7 @@ Item {
         value: kuser.faceIconUrl
         // revert to the plasmoid icon if no face given
         when: !!kuser.faceIconUrl
+        restoreMode: Binding.RestoreBinding
     }
 
     KCoreAddons.KUser {
