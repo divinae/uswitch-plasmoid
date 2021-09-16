@@ -70,7 +70,6 @@ ColumnLayout {
                 cfg_showSett = (current === showOnlySettRadio || current === showIconAndNameRadio)
                 cfg_showName = (current === showOnlyNameRadio || current === showBothRadio || current === showIconAndNameRadio)
                 cfg_showFace = (current === showOnlyFaceRadio || current === showBothRadio)
-                cfg_settIcon = setIcon.text
             }
         }
 
