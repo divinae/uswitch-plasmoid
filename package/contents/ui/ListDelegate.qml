@@ -67,16 +67,16 @@ Item {
     RowLayout {
         id: row
         anchors.centerIn: parent
-        width: parent.width - units.smallSpacing
-        spacing: units.smallSpacing
+        width: parent.width - PlasmaCore.Units.smallSpacing
+        spacing: PlasmaCore.Units.smallSpacing
 
         PlasmaCore.IconItem {
             id: icon
             // gosh, there needs to be a Layout.fixedWidth
-            Layout.minimumWidth: 1.6*units.iconSizes.small
-            Layout.maximumWidth: 1.6*units.iconSizes.small
-            Layout.minimumHeight: 1.6*units.iconSizes.small
-            Layout.maximumHeight: 1.6*units.iconSizes.small
+            Layout.minimumWidth: 1.6*PlasmaCore.Units.iconSizes.small
+            Layout.maximumWidth: 1.6*PlasmaCore.Units.iconSizes.small
+            Layout.minimumHeight: 1.6*PlasmaCore.Units.iconSizes.small
+            Layout.maximumHeight: 1.6*PlasmaCore.Units.iconSizes.small
 
             MouseArea {
                 anchors.fill: parent

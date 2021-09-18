@@ -17,6 +17,7 @@
  */
 
 import QtQuick 2.2
+import QtQml 2.14
 import QtQuick.Controls 1.1 as QtControls
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
@@ -47,8 +48,8 @@ Item {
     // TTY number and X display
     readonly property bool showTechnicalInfo: plasmoid.configuration.showTechnicalInfo
 
-    Plasmoid.switchWidth: units.gridUnit * 10
-    Plasmoid.switchHeight: units.gridUnit * 12
+    Plasmoid.switchWidth: PlasmaCore.Units.gridUnit * 10
+    Plasmoid.switchHeight: PlasmaCore.Units.gridUnit * 12
 
     Plasmoid.toolTipTextFormat: Text.StyledText
     Plasmoid.toolTipSubText: i18n("You are logged in as <b>%1</b>", displayedName)
@@ -86,6 +87,7 @@ Item {
         value: kuser.faceIconUrl
         // revert to the plasmoid icon if no face given
         when: !!kuser.faceIconUrl
+        restoreMode: Binding.RestoreBinding
     }
 
     KCoreAddons.KUser {
@@ -96,15 +98,15 @@ Item {
         id: compactRoot
 
         // Taken from DigitalClock to ensure uniform sizing when next to each other
-        readonly property bool tooSmall: plasmoid.formFactor === PlasmaCore.Types.Horizontal && Math.round(2 * (compactRoot.height / 5)) <= theme.smallestFont.pixelSize
+        readonly property bool tooSmall: plasmoid.formFactor === PlasmaCore.Types.Horizontal && Math.round(2 * (compactRoot.height / 5)) <= PlasmaCore.Theme.smallestFont.pixelSize
 
         Layout.minimumWidth: isVertical ? 0 : compactRow.implicitWidth
         Layout.maximumWidth: isVertical ? Infinity : Layout.minimumWidth
         Layout.preferredWidth: isVertical ? undefined : Layout.minimumWidth
 
-        Layout.minimumHeight: isVertical ? label.height : theme.smallestFont.pixelSize
+        Layout.minimumHeight: isVertical ? label.height : PlasmaCore.Theme.smallestFont.pixelSize
         Layout.maximumHeight: isVertical ? Layout.minimumHeight : Infinity
-        Layout.preferredHeight: isVertical ? Layout.minimumHeight : theme.mSize(theme.defaultFont).height * 2
+        Layout.preferredHeight: isVertical ? Layout.minimumHeight : PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height * 2
 
         onClicked: plasmoid.expanded = !plasmoid.expanded
 
@@ -112,7 +114,7 @@ Item {
             id: compactRow
 
             anchors.centerIn: parent
-            spacing: units.smallSpacing
+            spacing: PlasmaCore.Units.smallSpacing
 
             Kirigami.Avatar {
                 id: icon
@@ -139,8 +141,8 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.NoWrap
                 fontSizeMode: Text.VerticalFit
-                font.pixelSize: tooSmall ? theme.defaultFont.pixelSize : units.roundToIconSize(units.gridUnit * 2)
-                minimumPointSize: theme.smallesFont.pointSize
+                font.pixelSize: tooSmall ? PlasmaCore.Theme.defaultFont.pixelSize : PlasmaCore.Units.roundToIconSize(PlasmaCore.Units.gridUnit * 2)
+                minimumPointSize: PlasmaCore.Theme.smallestFont.pointSize
                 visible: root.showName
             }
         }
@@ -149,7 +151,7 @@ Item {
     Plasmoid.fullRepresentation: Item {
         id: fullRoot
 
-        Layout.preferredWidth: units.gridUnit * 12
+        Layout.preferredWidth: PlasmaCore.Units.gridUnit * 12
         Layout.preferredHeight: Math.min(Screen.height * 0.5, column.contentHeight)
 
         PlasmaCore.DataSource {
@@ -229,8 +231,8 @@ Item {
             Rectangle {
                 id: separatorItem
                 Layout.alignment: Qt.AlignCenter
-                width: parent
-                height: units.smallSpacing*2
+                width: parent.width
+                height: PlasmaCore.Units.smallSpacing*2
                 opacity: 0
             }
 
@@ -306,8 +308,8 @@ Item {
             Rectangle {
                 id: separatorItem3
                 Layout.alignment: Qt.AlignCenter
-                width: parent
-                height: units.smallSpacing*2
+                width: parent.width
+                height: PlasmaCore.Units.smallSpacing*2
                 opacity: 0
             }
 
