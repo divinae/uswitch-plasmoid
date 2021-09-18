@@ -32,6 +32,7 @@ ColumnLayout {
     property bool cfg_showSett
     property alias cfg_icon: icon.text
     property alias cfg_showTechnicalInfo: showTechnicalInfoCheck.checked
+    property alias cfg_iconPositionRight: iconPositionRightCheck.checked
 
     QtControls.GroupBox {
         title: i18n("User name display")
@@ -112,6 +113,11 @@ ColumnLayout {
                 exclusiveGroup: layoutEg
                 text: i18n("Show both avatar and name")
                 checked: cfg_showName && cfg_showFace && !cfg_showSett
+            }
+
+            QtControls.CheckBox {
+                id: iconPositionRightCheck
+                text: i18n("Icon to the right of the name")
             }
 
             QtControls.CheckBox {

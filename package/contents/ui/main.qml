@@ -24,7 +24,8 @@ import QtQuick.Window 2.1
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents // for Highlight
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kcoreaddons 1.0 as KCoreAddons // kuser
 import org.kde.kquickcontrolsaddons 2.0 // kcmshell
@@ -34,6 +35,7 @@ import org.kde.plasma.private.sessions 2.0 as Sessions
 
 Item {
     id: root
+
     readonly property bool isVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
     readonly property string displayedName: showFullName ? kuser.fullName : kuser.loginName
@@ -47,6 +49,7 @@ Item {
 
     // TTY number and X display
     readonly property bool showTechnicalInfo: plasmoid.configuration.showTechnicalInfo
+    readonly property bool iconPositionRight: plasmoid.configuration.iconPositionRight
 
     Plasmoid.switchWidth: PlasmaCore.Units.gridUnit * 10
     Plasmoid.switchHeight: PlasmaCore.Units.gridUnit * 12
@@ -86,7 +89,7 @@ Item {
         property: "icon"
         value: kuser.faceIconUrl
         // revert to the plasmoid icon if no face given
-        when: !!kuser.faceIconUrl
+        when: kuser.faceIconUrl.toString() !== ""
         restoreMode: Binding.RestoreBinding
     }
 
@@ -112,7 +115,7 @@ Item {
 
         Row {
             id: compactRow
-
+            layoutDirection: iconPositionRight ? Qt.RightToLeft : Qt.LeftToRight
             anchors.centerIn: parent
             spacing: PlasmaCore.Units.smallSpacing
 
@@ -133,7 +136,7 @@ Item {
                 visible: root.showSett
             }
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 id: label
                 text: root.displayedName
                 height: compactRoot.height
@@ -242,8 +245,8 @@ Item {
                 subText: i18n("<i>Current user</i>")
                 icon: "user-identity"
                 interactive: false
-                interactiveIcon: true
-                onIconClicked: KCMShell.open("user_manager")
+                interactiveIcon: KCMShell.authorize("kcm_users.desktop").length > 0
+                onIconClicked: KCMShell.openSystemSettings("kcm_users")
             }
 
             PlasmaExtras.ScrollArea {
@@ -296,10 +299,9 @@ Item {
                 }
             }
 
-
             ListDelegate {
                 id: newSessionButton
-                text: i18n("New Session")
+                text: i18nc("@action", "New Session")
                 highlight: delegateHighlight
                 visible: sessionsModel.canStartNewSession
                 onClicked: sessionsModel.startNewSession(sessionsModel.shouldLock)
@@ -315,7 +317,7 @@ Item {
 
             ListDelegate {
                 id: lockScreenButton
-                text: i18n("Lock Screen")
+                text: i18nc("@action", "Lock Screen")
                 icon: "system-lock-screen"
                 highlight: delegateHighlight
                 enabled: pmEngine.data["Sleep States"]["LockScreen"]
