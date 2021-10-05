@@ -126,8 +126,8 @@ ColumnLayout {
             }
 
             QtControls.Label {
-                        text: i18n('Icon:')
-                    }
+                text: i18n('Icon:')
+            }
 
             RowLayout {
                 QtControls.TextField {
@@ -135,23 +135,11 @@ ColumnLayout {
                     implicitWidth: 300
                 }
 
-                QtControls.Button {
-                    iconName: 'folder'
-                    onClicked: {
-                        iconDialog.open()
-                    }
+                ConfigIcon {
+                    value: icon.text
+                    onValueChanged: icon.text = value
                 }
             }
-        }
-    }
-
-    FileDialog {
-        id: iconDialog
-        title: 'Please choose an image file'
-        folder: '/usr/share/icons/breeze/'
-        nameFilters: ['Image files (*.png *.jpg *.xpm *.svg *.svgz)', 'All files (*)']
-        onAccepted: {
-            icon.text = iconDialog.fileUrl
         }
     }
 
