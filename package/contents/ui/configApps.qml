@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.10
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -31,14 +31,15 @@ ColumnLayout {
         }
     }
     
-    ScrollView {
+    ListView {
         Layout.fillHeight: true
         Layout.fillWidth: true
-        ListView {
-            id: userAppList
-            clip: true
-            model: userAppsModel
-            delegate: appListItem
+        id: userAppList
+        clip: true
+        model: userAppsModel
+        delegate: appListItem
+        ScrollBar.vertical: ScrollBar {
+            active: true
         }
     }
 
