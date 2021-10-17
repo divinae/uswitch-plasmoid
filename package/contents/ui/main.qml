@@ -47,6 +47,9 @@ Item {
 
     readonly property bool showFullName: plasmoid.configuration.showFullName
 
+    readonly property string userSwitcherDomain: "plasma_applet_org.kde.plasma.userswitcher"
+    readonly property string lookAndFeelDomain: "plasma_lookandfeel_org.kde.lookandfeel"
+
     // TTY number and X display
     readonly property bool showTechnicalInfo: plasmoid.configuration.showTechnicalInfo
     readonly property bool iconPositionRight: plasmoid.configuration.iconPositionRight
@@ -55,7 +58,7 @@ Item {
     Plasmoid.switchHeight: PlasmaCore.Units.gridUnit * 12
 
     Plasmoid.toolTipTextFormat: Text.StyledText
-    Plasmoid.toolTipSubText: i18n("You are logged in as <b>%1</b>", displayedName)
+    Plasmoid.toolTipSubText: i18nd(userSwitcherDomain, "You are logged in as <b>%1</b>", displayedName)
 
     PlasmaCore.DataSource {
         id: executable
@@ -242,7 +245,7 @@ Item {
             ListDelegate {
                 id: currentUserItem
                 text: root.displayedName
-                subText: i18n("<i>Current user</i>")
+                subText: i18nd(userSwitcherDomain, "Current user")
                 icon: "user-identity"
                 interactive: false
                 interactiveIcon: KCMShell.authorize("kcm_users.desktop").length > 0
@@ -264,7 +267,7 @@ Item {
                         width: userList.width
                         text: {
                             if (!model.session) {
-                                return i18nc("Nobody logged in on that session", "Unused")
+                                return i18ndc(userSwitcherDomain, "Nobody logged in on that session", "Unused")
                             }
 
                             if (model.realName && root.showFullName) {
@@ -280,9 +283,9 @@ Item {
                             }
 
                             if (model.isTty) {
-                                return i18nc("User logged in on console number", "TTY %1", model.vtNumber)
+                                return i18ndc(userSwitcherDomain, "User logged in on console number", "TTY %1", model.vtNumber)
                             } else if (model.displayNumber) {
-                                return i18nc("User logged in on console (X display number)", "on %1 (%2)", model.vtNumber, model.displayNumber)
+                                return i18ndc(userSwitcherDomain, "User logged in on console (X display number)", "on %1 (%2)", model.vtNumber, model.displayNumber)
                             }
                             return ""
                         }
@@ -301,7 +304,7 @@ Item {
 
             ListDelegate {
                 id: newSessionButton
-                text: i18nc("@action", "New Session")
+                text: i18ndc(userSwitcherDomain, "@action", "New Session")
                 highlight: delegateHighlight
                 visible: sessionsModel.canStartNewSession
                 onClicked: sessionsModel.startNewSession(sessionsModel.shouldLock)
@@ -317,7 +320,7 @@ Item {
 
             ListDelegate {
                 id: lockScreenButton
-                text: i18nc("@action", "Lock Screen")
+                text: i18ndc(userSwitcherDomain, "@action", "Lock Screen")
                 icon: "system-lock-screen"
                 highlight: delegateHighlight
                 enabled: pmEngine.data["Sleep States"]["LockScreen"]
@@ -327,7 +330,7 @@ Item {
 
             ListDelegate {
                 id: suspendButton
-                text: i18n("Suspend")
+                text: i18ndc(lookAndFeelDomain, "Suspend to RAM", "Sleep")
                 highlight: delegateHighlight
                 icon: "system-suspend"
                 onClicked: pmEngine.performOperation("suspend")
@@ -335,7 +338,7 @@ Item {
 
             ListDelegate {
                 id: leaveButton
-                text: i18nc("Show a dialog with options to logout/shutdown/restart", "Leave...")
+                text: i18ndc(userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave...")
                 highlight: delegateHighlight
                 icon: "system-log-out"
                 onClicked: pmEngine.performOperation("requestShutDown")
