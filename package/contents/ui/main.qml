@@ -29,6 +29,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kcoreaddons 1.0 as KCoreAddons // kuser
 import org.kde.kquickcontrolsaddons 2.0 // kcmshell
+import org.kde.plasma.private.quicklaunch 1.0 // Logic
 import org.kde.kirigami 2.13 as Kirigami
 
 import org.kde.plasma.private.sessions 2.0 as Sessions
@@ -61,30 +62,31 @@ Item {
     Plasmoid.toolTipSubText: i18nd(userSwitcherDomain, "You are logged in as <b>%1</b>", displayedName)
 
     PlasmaCore.DataSource {
-        id: executable
-        engine: "executable"
-        connectedSources: []
-        property var callbacks: ({})
+        id: apps
+        engine: "apps"
+
+        property string appListConfig: plasmoid.configuration.appList
+        property ListModel model: ListModel {}
+        property var userApps
+        
         onNewData: {
-            var stdout = data["stdout"]
-
-            if (callbacks[sourceName] !== undefined) {
-                callbacks[sourceName](stdout);
-            }
-
-            exited(sourceName, stdout)
-            disconnectSource(sourceName) // cmd finished
+            model.append(Object.assign({}, data, userApps.get(sourceName)))
+            disconnectSource(sourceName)
         }
 
-        function exec(cmd, onNewDataCallback) {
-            if (onNewDataCallback !== undefined){
-                callbacks[cmd] = onNewDataCallback
-            }
-            connectSource(cmd)
-
+        onAppListConfigChanged: {
+            model.clear()
+            userApps = new Map(JSON.parse(appListConfig))
+            Array.from(userApps.keys()).forEach(connectSource)
         }
-        signal exited(string sourceName, string stdout)
-
+    }
+    
+    Logic {
+        id: kRun
+        
+        function launch(desktopFile) {
+            openUrl('file:' + desktopFile)
+        }
     }
 
     Binding {
@@ -195,7 +197,7 @@ Item {
             id: column
 
             // there doesn't seem a more sensible way of getting this due to the expanding ListView
-            readonly property int contentHeight: aboutComputerItem.height + systemSettingsItem.height + systemMonitorItem.height + 2*separatorItem.height + currentUserItem.height + userList.contentHeight
+            readonly property int contentHeight: appColumn.childrenRect.height + 2*separatorItem.height + currentUserItem.height + userList.contentHeight
                                                + (newSessionButton.visible ? newSessionButton.height : 0)
                                                + (lockScreenButton.visible ? lockScreenButton.height : 0)
                                                + suspendButton.height + leaveButton.height
@@ -204,33 +206,17 @@ Item {
 
             spacing: 0
 
-            ListDelegate {
-                id: aboutComputerItem
-                text: i18n("About This Computer")
-                icon: "help-about"
-                highlight: delegateHighlight
-                onClicked: {
-                    executable.exec("kinfocenter");
-                }
-            }
-
-            ListDelegate {
-                id: systemMonitorItem
-                text: i18n("System Monitor")
-                icon: "view-process-tree"
-                highlight: delegateHighlight
-                onClicked: {
-                    executable.exec("ksysguard");
-                }
-            }
-
-            ListDelegate {
-                id: systemSettingsItem
-                text: i18n("System Settings")
-                icon: "settings-configure"
-                highlight: delegateHighlight
-                onClicked: {
-                    executable.exec("systemsettings5");
+            ColumnLayout {
+                id: appColumn
+                Repeater {
+                    model: apps.model
+                    
+                    ListDelegate {
+                        text: model.name
+                        icon: model.iconName
+                        highlight: delegateHighlight
+                        onClicked: kRun.launch(model.entryPath)
+                    }
                 }
             }
 

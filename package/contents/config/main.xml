@@ -30,5 +30,10 @@
       <default>false</default>
     </entry>
   </group>
+  <group name="Apps">
+    <entry name="appList" type="String">
+      <default>[["org.kde.systemmonitor.desktop", { "iconName": "view-process-tree" }], ["org.kde.kinfocenter.desktop", { "iconName": "help-about" }], ["systemsettings.desktop", { "iconName": "settings-configure" }]]</default>
+    </entry>
+  </group>
 
 </kcfg>
