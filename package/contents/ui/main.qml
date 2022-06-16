@@ -324,7 +324,7 @@ Item {
 
             ListDelegate {
                 id: leaveButton
-                text: i18ndc(userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave...")
+                text: i18ndc(userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave…")
                 highlight: delegateHighlight
                 icon: "system-log-out"
                 onClicked: pmEngine.performOperation("requestShutDown")
