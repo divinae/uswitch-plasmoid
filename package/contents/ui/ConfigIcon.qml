@@ -1,7 +1,7 @@
-import QtQuick 2.5
-import QtQuick.Controls 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
+import QtQuick
+import QtQuick.Controls
+import org.kde.plasma.core as PlasmaCore
+import org.kde.iconthemes as KIconThemes
 
 Button {
     id: configIcon
@@ -11,7 +11,7 @@ Button {
 
     icon.name: value
 
-    KQuickAddons.IconDialog {
+    KIconThemes.IconDialog {
         id: iconDialog
         onIconNameChanged: configIcon.value = iconName || configIcon.defaultValue
     }

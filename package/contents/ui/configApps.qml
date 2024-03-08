@@ -1,8 +1,9 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasma5support as Plasma5Support
 
 ColumnLayout {
     property string cfg_appList
@@ -14,7 +15,7 @@ ColumnLayout {
         onRowsMoved: saveApps()
     }
     
-    PlasmaCore.DataSource {
+    Plasma5Support.DataSource {
         id: appSource
         engine: "apps"
         connectedSources: sources
@@ -74,7 +75,7 @@ ColumnLayout {
             }
         }
     }
-
+    
     RowLayout {
         ComboBox {
             id: appSelector

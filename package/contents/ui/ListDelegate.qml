@@ -1,109 +1,72 @@
 ﻿/*
- *  Copyright 2015 Kai Uwe Broulik <kde@privat.broulik.de>
+ *  SPDX-FileCopyrightText: 2015 Kai Uwe Broulik <kde@privat.broulik.de>
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  2.010-1301, USA.
+ *  SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-import QtQuick 2.2
-import QtQuick.Layouts 1.1
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
-Item {
+PlasmaComponents3.ItemDelegate {
     id: item
-
-    signal clicked
-    signal iconClicked
-
-    property alias text: label.text
-    property alias subText: sublabel.text
-    property alias icon: icon.source
-    // "enabled" also affects all children
-    property bool interactive: true
-    property bool interactiveIcon: false
-
-    property alias containsMouse: area.containsMouse
-
-    property Item highlight
 
     Layout.fillWidth: true
 
-    height: row.height
+    property alias subText: sublabel.text
+    property alias iconItem: iconItem.children
 
-    MouseArea {
-        id: area
-        anchors.fill: parent
-        enabled: item.interactive
-        hoverEnabled: true
-        onClicked: item.clicked()
-        onContainsMouseChanged: {
-            if (!highlight) {
-                return
-            }
+    highlighted: activeFocus
 
-            if (containsMouse) {
-                highlight.parent = item
-                highlight.width = item.width
-                highlight.height = item.height
-            }
+    Accessible.name: `${text}${subText ? `: ${subText}` : ""}`
 
-            highlight.visible = containsMouse
+    onHoveredChanged: if (hovered) {
+        if (ListView.view) {
+            ListView.view.currentIndex = index;
         }
+        forceActiveFocus();
     }
 
-    RowLayout {
+    contentItem: RowLayout {
         id: row
-        anchors.centerIn: parent
-        width: parent.width - PlasmaCore.Units.smallSpacing
-        spacing: PlasmaCore.Units.smallSpacing
 
-        PlasmaCore.IconItem {
-            id: icon
-            // gosh, there needs to be a Layout.fixedWidth
-            Layout.minimumWidth: 1.6*PlasmaCore.Units.iconSizes.small
-            Layout.maximumWidth: 1.6*PlasmaCore.Units.iconSizes.small
-            Layout.minimumHeight: 1.6*PlasmaCore.Units.iconSizes.small
-            Layout.maximumHeight: 1.6*PlasmaCore.Units.iconSizes.small
+        spacing: Kirigami.Units.smallSpacing
 
-            MouseArea {
-                anchors.fill: parent
-                visible: item.interactiveIcon
-                cursorShape: Qt.PointingHandCursor
-                onClicked: item.iconClicked()
-            }
+        Item {
+            id: iconItem
+
+            Layout.preferredWidth: 1.6 * Kirigami.Units.iconSizes.small
+            Layout.preferredHeight: 1.6 * Kirigami.Units.iconSizes.small
+            Layout.minimumWidth: Layout.preferredWidth
+            Layout.maximumWidth: Layout.preferredWidth
+            Layout.minimumHeight: Layout.preferredHeight
+            Layout.maximumHeight: Layout.preferredHeight
         }
 
         ColumnLayout {
+            id: column
             Layout.fillWidth: true
             spacing: 0
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 id: label
                 Layout.fillWidth: true
+                text: item.text
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
             }
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 id: sublabel
                 Layout.fillWidth: true
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
                 opacity: 0.6
-                font: theme.smallestFont
+                font: Kirigami.Theme.smallestFont
                 visible: text !== ""
             }
         }
