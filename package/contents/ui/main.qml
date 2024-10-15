@@ -287,7 +287,7 @@ PlasmoidItem {
                 id: leaveButton
                 text: i18ndc(userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave…")
                 icon.name: "system-log-out"
-                onClicked: sm.requestShutdown()
+                onClicked: sm.requestLogoutPrompt()
             }
 
             Connections {
