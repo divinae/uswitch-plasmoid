@@ -1,8 +1,8 @@
-﻿import QtQuick 
+﻿import QtQuick
 import QtQml
 import QtQuick.Controls as QtControls
 import QtQuick.Layouts
-import QtQuick.Window 
+import QtQuick.Window
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core  as PlasmaCore
@@ -11,7 +11,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.coreaddons as KCoreAddons // kuser
 import org.kde.kquickcontrolsaddons // kcmshell
-import org.kde.plasma.private.quicklaunch // Logic
+import com.dv.uswitcher.quicklaunch // Logic
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.components as KirigamiComponents
 import org.kde.plasma.private.sessions as Sessions
@@ -52,7 +52,7 @@ PlasmoidItem {
         property string appListConfig: Plasmoid.configuration.appList
         property ListModel model: ListModel {}
         property var userApps
-        
+
         onNewData: {
             model.append(Object.assign({}, data, userApps.get(sourceName)))
             disconnectSource(sourceName)
@@ -64,10 +64,10 @@ PlasmoidItem {
             Array.from(userApps.keys()).forEach(connectSource)
         }
     }
-    
+
     Logic {
         id: kRun
-        
+
         function launch(desktopFile) {
             openUrl('file:' + desktopFile)
         }
@@ -173,7 +173,7 @@ PlasmoidItem {
                 id: appColumn
                 Repeater {
                     model: apps.model
-                    
+
                     ActionListDelegate {
                         text: model.name
                         icon.name: model.iconName
@@ -188,7 +188,7 @@ PlasmoidItem {
                 width: parent.width
                 height: Kirigami.Units.smallSpacing*2
                 opacity: 0
-            } 
+            }
 
             UserListDelegate {
                 id: currentUserItem
@@ -265,7 +265,7 @@ PlasmoidItem {
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
                 height: Kirigami.Units.smallSpacing*2
-                opacity: 0 
+                opacity: 0
             }
 
             ActionListDelegate {
@@ -297,7 +297,7 @@ PlasmoidItem {
                         sessionsModel.reload();
                     }
                 }
-    
+
             }
         }
     }
