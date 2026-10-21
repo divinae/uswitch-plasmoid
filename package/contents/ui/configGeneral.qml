@@ -18,9 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import QtQuick 
+import QtQuick
 import QtQuick.Controls as QtControls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
@@ -31,8 +30,9 @@ KCM.SimpleKCM {
     property bool cfg_showName
     property bool cfg_showFullName
     property bool cfg_showSett
-    property alias cfg_icon: icon.text
+    property alias cfg_icon: iconField.text
     property alias cfg_showTechnicalInfo: showTechnicalInfoCheck.checked
+    property alias cfg_iconPositionRight: iconPositionRightCheck.checked
 
     Kirigami.FormLayout {
         QtControls.ButtonGroup {
@@ -78,8 +78,8 @@ KCM.SimpleKCM {
             onClicked: {
                 if (checked) {
                     cfg_showName = true;
-                    cfg_showFace = false; 
-                    cfg_showSett =  false;
+                    cfg_showFace = false;
+                    cfg_showSett = false;
                 }
             }
         }
@@ -94,7 +94,7 @@ KCM.SimpleKCM {
                 if (checked) {
                     cfg_showName = false;
                     cfg_showFace = true;
-                    cfg_showSett =  false;
+                    cfg_showSett = false;
                 }
             }
         }
@@ -109,7 +109,7 @@ KCM.SimpleKCM {
                 if (checked) {
                     cfg_showName = false;
                     cfg_showFace = false;
-                    cfg_showSett =  true;
+                    cfg_showSett = true;
                 }
             }
         }
@@ -124,7 +124,7 @@ KCM.SimpleKCM {
                 if (checked) {
                     cfg_showName = true;
                     cfg_showFace = true;
-                    cfg_showSett =  false;
+                    cfg_showSett = false;
                 }
             }
         }
@@ -139,7 +139,7 @@ KCM.SimpleKCM {
                 if (checked) {
                     cfg_showName = true;
                     cfg_showFace = false;
-                    cfg_showSett =  true;
+                    cfg_showSett = true;
                 }
             }
         }
@@ -149,16 +149,24 @@ KCM.SimpleKCM {
         }
 
         RowLayout {
-            QtControls.TextField { 
-                Kirigami.FormData.label: i18nc("@title:label", "Icon:")
-                id: icon
-                implicitWidth: 300
+            Kirigami.FormData.label: i18nc("@title:label", "Icon:")
+
+            QtControls.TextField {
+                id: iconField
+                implicitWidth: Kirigami.Units.gridUnit * 15
             }
 
             ConfigIcon {
-                value: icon.text
-                onValueChanged: icon.text = value
+                value: iconField.text
+                defaultValue: "avatar-default-symbolic"
+                onValueChanged: iconField.text = value
             }
+        }
+
+        QtControls.CheckBox {
+            id: iconPositionRightCheck
+            text: i18nc("@option:check", "Place icon to the right of the name")
+            enabled: cfg_showName && (cfg_showFace || cfg_showSett)
         }
 
         Item {

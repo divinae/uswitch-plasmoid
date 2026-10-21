@@ -1,43 +1,43 @@
-﻿import QtQuick
-import QtQml
-import QtQuick.Controls as QtControls
+﻿/*
+ *  SPDX-FileCopyrightText: 2015 Kai Uwe Broulik <kde@privat.broulik.de>
+ *  SPDX-FileCopyrightText: 2026 Jakub Lipiński <lipinski.j@pm.me>
+ *
+ *  SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
+import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 
-import org.kde.plasma.plasmoid
-import org.kde.plasma.core  as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
-import org.kde.plasma.extras as PlasmaExtras
-import org.kde.coreaddons as KCoreAddons // kuser
-import org.kde.kquickcontrolsaddons // kcmshell
-import com.dv.uswitcher.quicklaunch // Logic
+import org.kde.coreaddons as KCoreAddons
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.components as KirigamiComponents
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 import org.kde.plasma.private.sessions as Sessions
-import org.kde.plasma.plasma5support as Plasma5Support
+
+import com.dv.uswitcher.private as USwitcher
 
 PlasmoidItem {
     id: root
 
     readonly property bool isVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
 
-    readonly property string displayedName: showFullName ? kuser.fullName : kuser.loginName
-
     readonly property bool showFace: Plasmoid.configuration.showFace
     readonly property bool showSett: Plasmoid.configuration.showSett
     readonly property bool showName: Plasmoid.configuration.showName
-    property var iconSett: Plasmoid.configuration.icon
-    readonly property string avatarIcon: kuser.faceIconUrl.toString()
-
     readonly property bool showFullName: Plasmoid.configuration.showFullName
-
-    readonly property string userSwitcherDomain: "plasma_applet_org.kde.plasma.userswitcher"
-    readonly property string lookAndFeelDomain: "plasma_lookandfeel_org.kde.lookandfeel"
-
     // TTY number and X display
     readonly property bool showTechnicalInfo: Plasmoid.configuration.showTechnicalInfo
     readonly property bool iconPositionRight: Plasmoid.configuration.iconPositionRight
+    readonly property string iconName: Plasmoid.configuration.icon || "avatar-default-symbolic"
+
+    readonly property string displayedName: showFullName && kuser.fullName ? kuser.fullName : kuser.loginName
+    readonly property string avatarIcon: kuser.faceIconUrl.toString()
+
+    readonly property string userSwitcherDomain: "plasma_applet_org.kde.plasma.userswitcher"
+    readonly property string lookAndFeelDomain: "plasma_lookandfeel_org.kde.lookandfeel"
 
     switchWidth: Kirigami.Units.gridUnit * 10
     switchHeight: Kirigami.Units.gridUnit * 12
@@ -45,97 +45,79 @@ PlasmoidItem {
     toolTipTextFormat: Text.StyledText
     toolTipSubText: i18nd(userSwitcherDomain, "You are logged in as <b>%1</b>", displayedName)
 
-    Plasma5Support.DataSource {
-        id: apps
-        engine: "apps"
-
-        property string appListConfig: Plasmoid.configuration.appList
-        property ListModel model: ListModel {}
-        property var userApps
-
-        onNewData: {
-            model.append(Object.assign({}, data, userApps.get(sourceName)))
-            disconnectSource(sourceName)
-        }
-
-        onAppListConfigChanged: {
-            model.clear()
-            userApps = new Map(JSON.parse(appListConfig))
-            Array.from(userApps.keys()).forEach(connectSource)
-        }
-    }
-
-    Logic {
-        id: kRun
-
-        function launch(desktopFile) {
-            openUrl('file:' + desktopFile)
-        }
-    }
-
-    Binding {
-        target: plasmoid
-        property: "icon"
-        value: kuser.faceIconUrl
-        // revert to the plasmoid icon if no face given
-        when: kuser.faceIconUrl.toString() !== ""
-        restoreMode: Binding.RestoreBinding
-    }
+    // revert to the plasmoid icon if no face given
+    Plasmoid.icon: avatarIcon || Plasmoid.metaData.iconName
 
     KCoreAddons.KUser {
         id: kuser
+    }
+
+    USwitcher.AppsModel {
+        id: appsModel
+        appList: Plasmoid.configuration.appList
     }
 
     compactRepresentation: MouseArea {
         id: compactRoot
 
         // Taken from DigitalClock to ensure uniform sizing when next to each other
-        readonly property bool tooSmall: Plasmoid.formFactor === PlasmaCore.Types.Horizontal && Math.round(2 * (compactRoot.height / 5)) <= PlasmaCore.Theme.smallestFont.pixelSize
+        readonly property bool tooSmall: Plasmoid.formFactor === PlasmaCore.Types.Horizontal
+            && Math.round(2 * (compactRoot.height / 5)) <= Kirigami.Theme.smallFont.pixelSize
+        readonly property real iconSize: root.isVertical ? compactRoot.width : compactRoot.height
 
-        Layout.minimumWidth: isVertical ? 0 : compactRow.implicitWidth
-        Layout.maximumWidth: isVertical ? Infinity : Layout.minimumWidth
-        Layout.preferredWidth: isVertical ? undefined : Layout.minimumWidth
+        Layout.minimumWidth: root.isVertical ? 0 : compactRow.implicitWidth
+        Layout.maximumWidth: root.isVertical ? Infinity : Layout.minimumWidth
+        Layout.preferredWidth: root.isVertical ? -1 : Layout.minimumWidth
 
-        Layout.minimumHeight: isVertical ? label.height : Kirigami.Theme.smallestFont.pixelSize
-        Layout.maximumHeight: isVertical ? Layout.minimumHeight : Infinity
-        Layout.preferredHeight: isVertical ? Layout.minimumHeight : Kirigami.Theme.mSize(Kirigami.Theme.defaultFont).height * 2
+        Layout.minimumHeight: root.isVertical ? compactRow.implicitHeight : Kirigami.Theme.smallFont.pixelSize
+        Layout.maximumHeight: root.isVertical ? Layout.minimumHeight : Infinity
+        Layout.preferredHeight: root.isVertical ? Layout.minimumHeight : Kirigami.Units.iconSizes.sizeForLabels * 2
+
+        hoverEnabled: true
 
         property bool wasExpanded
         onPressed: wasExpanded = root.expanded
         onClicked: root.expanded = !wasExpanded
 
-        Row {
+        Grid {
             id: compactRow
-            layoutDirection: iconPositionRight ? Qt.RightToLeft : Qt.LeftToRight
+
             anchors.centerIn: parent
+            rows: root.isVertical ? -1 : 1
+            columns: root.isVertical ? 1 : -1
+            horizontalItemAlignment: Grid.AlignHCenter
+            verticalItemAlignment: Grid.AlignVCenter
+            layoutDirection: root.iconPositionRight ? Qt.RightToLeft : Qt.LeftToRight
             spacing: Kirigami.Units.smallSpacing
 
             KirigamiComponents.Avatar {
-                id: icon
-                width: compactRoot.height
-                height: compactRoot.height
-                source: visible ? (kuser.faceIconUrl || "user-identity") : ""
+                width: compactRoot.iconSize
+                height: compactRoot.iconSize
+                source: root.avatarIcon
+                name: root.displayedName
                 visible: root.showFace
             }
 
             Kirigami.Icon {
-                id: icon2
-                width: height
-                height: compactRoot.height
-                Layout.preferredWidth: height
-                source: visible ? (iconSett || "avatar-default-symbolic") : ""
+                width: compactRoot.iconSize
+                height: compactRoot.iconSize
+                source: root.iconName
+                active: compactRoot.containsMouse
                 visible: root.showSett
             }
 
-            PlasmaComponents.Label {
-                id: label
+            PlasmaComponents3.Label {
+                width: root.isVertical ? compactRoot.width : implicitWidth
+                height: root.isVertical ? implicitHeight : compactRoot.height
                 text: root.displayedName
-                height: compactRoot.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.NoWrap
-                fontSizeMode: Text.VerticalFit
-                font.pixelSize: tooSmall ? Kirigami.Theme.defaultFont.pixelSize : Kirigami.Units.iconSizes.roundedIconSize(Kirigami.Units.gridUnit * 2)
+                elide: root.isVertical ? Text.ElideRight : Text.ElideNone
+                fontSizeMode: root.isVertical ? Text.FixedSize : Text.VerticalFit
+                font.pixelSize: compactRoot.tooSmall || root.isVertical
+                    ? Kirigami.Theme.defaultFont.pixelSize
+                    : Kirigami.Units.iconSizes.roundedIconSize(Kirigami.Units.gridUnit * 2)
                 minimumPointSize: Kirigami.Theme.smallFont.pointSize
                 visible: root.showName
             }
@@ -163,31 +145,38 @@ PlasmoidItem {
             id: sessionsModel
         }
 
+        Connections {
+            target: root
+            function onExpandedChanged() {
+                if (root.expanded) {
+                    sessionsModel.reload();
+                }
+            }
+        }
+
         ColumnLayout {
             id: column
 
             anchors.fill: parent
             spacing: 0
 
-            ColumnLayout {
-                id: appColumn
-                Repeater {
-                    model: apps.model
+            Repeater {
+                model: appsModel
 
-                    ActionListDelegate {
-                        text: model.name
-                        icon.name: model.iconName
-                        onClicked: kRun.launch(model.entryPath)
+                ActionListDelegate {
+                    text: model.name
+                    icon.name: model.iconName
+                    visible: model.available
+                    onClicked: {
+                        appsModel.launch(index);
+                        root.expanded = false;
                     }
                 }
             }
 
-            Rectangle {
-                id: separatorItem
-                Layout.alignment: Qt.AlignCenter
-                width: parent.width
-                height: Kirigami.Units.smallSpacing*2
-                opacity: 0
+            Item {
+                Layout.preferredHeight: Kirigami.Units.smallSpacing * 2
+                visible: appsModel.count > 0
             }
 
             UserListDelegate {
@@ -220,27 +209,24 @@ PlasmoidItem {
 
                         text: {
                             if (!model.session) {
-                                return i18nc("Nobody logged in on that session", "Unused")
+                                return i18nc("Nobody logged in on that session", "Unused");
                             }
-
                             if (model.realName && root.showFullName) {
-                                return model.realName
+                                return model.realName;
                             }
-
-                            return model.name
+                            return model.name;
                         }
                         source: model.icon
                         subText: {
                             if (!root.showTechnicalInfo) {
-                                return ""
+                                return "";
                             }
-
                             if (model.isTty) {
-                                return i18nc("User logged in on console number", "TTY %1", model.vtNumber)
+                                return i18nc("User logged in on console number", "TTY %1", model.vtNumber);
                             } else if (model.displayNumber) {
-                                return i18nc("User logged in on console (X display number)", "on %1 (%2)", model.vtNumber, model.displayNumber)
+                                return i18nc("User logged in on console (X display number)", "on %1 (%2)", model.vtNumber, model.displayNumber);
                             }
-                            return ""
+                            return "";
                         }
 
                         KeyNavigation.up: index === 0 ? currentUserItem.nextItemInFocusChain() : userList.itemAtIndex(index - 1)
@@ -255,49 +241,35 @@ PlasmoidItem {
 
             ActionListDelegate {
                 id: newSessionButton
-                text: i18ndc(userSwitcherDomain, "@action", "New Session")
+                text: i18ndc(root.userSwitcherDomain, "@action", "New Session")
+                icon.name: "system-switch-user"
                 visible: sessionsModel.canStartNewSession
                 onClicked: sessionsModel.startNewSession(sessionsModel.shouldLock)
             }
 
-            Rectangle {
-                id: separatorItem3
-                Layout.alignment: Qt.AlignCenter
-                width: parent.width
-                height: Kirigami.Units.smallSpacing*2
-                opacity: 0
+            Item {
+                Layout.preferredHeight: Kirigami.Units.smallSpacing * 2
             }
 
             ActionListDelegate {
-                id: lockScreenButton
-                text: i18ndc(userSwitcherDomain, "@action", "Lock Screen")
+                text: i18ndc(root.userSwitcherDomain, "@action", "Lock Screen")
                 icon.name: "system-lock-screen"
                 visible: sm.canLock
                 onClicked: sm.lock()
             }
 
             ActionListDelegate {
-                id: suspendButton
-                text: i18ndc(lookAndFeelDomain, "Suspend to RAM", "Sleep")
+                text: i18ndc(root.lookAndFeelDomain, "Suspend to RAM", "Sleep")
                 icon.name: "system-suspend"
+                visible: sm.canSuspend
                 onClicked: sm.suspend()
             }
 
             ActionListDelegate {
-                id: leaveButton
-                text: i18ndc(userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave…")
+                text: i18ndc(root.userSwitcherDomain, "Show a dialog with options to logout/shutdown/restart", "Leave…")
                 icon.name: "system-log-out"
+                visible: sm.canLogout
                 onClicked: sm.requestLogoutPrompt()
-            }
-
-            Connections {
-                target: root
-                function onExpandedChanged() {
-                    if (root.expanded) {
-                        sessionsModel.reload();
-                    }
-                }
-
             }
         }
     }

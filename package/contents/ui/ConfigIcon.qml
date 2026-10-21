@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import org.kde.plasma.core as PlasmaCore
 import org.kde.iconthemes as KIconThemes
 
 Button {
