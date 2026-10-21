@@ -23,3 +23,8 @@ sudo cmake --install build
 Then restart Plasma (`systemctl --user restart plasma-plasmashell`).
 
 Options: `-DPACKAGE_PLASMOID=ON` also creates a `.plasmoid` archive (QML files only, the plugin still has to be installed).
+
+## Support
+If you find this plasmoid useful, you can support its development on Ko-fi:
+
+[![Support me on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/divinae4535)
