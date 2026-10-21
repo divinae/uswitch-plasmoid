@@ -5,11 +5,9 @@
  */
 
 import QtQuick
-import QtQml
 
 import org.kde.config as KConfig
 import org.kde.kcmutils as KCMUtils
-import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.components as KirigamiComponents
 
 ListDelegate {
