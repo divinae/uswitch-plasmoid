@@ -42,7 +42,7 @@ Qml), KF6 KIO, JobWidgets and Service, libplasma.
 **2. Build and install:**
 
 ```sh
-git clone https://github.com/divinae/uswitch.git
+git clone https://github.com/divinae/uswitch-plasmoid.git
 cd uswitch
 cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build build
@@ -68,7 +68,7 @@ on.
 
 ## Bugs and ideas
 
-Report them in [GitHub Issues](https://github.com/divinae/uswitch/issues): your distribution, the
+Report them in [GitHub Issues](https://github.com/divinae/uswitch-plasmoid/issues): your distribution, the
 Plasma version, the widget's version, and for a problem its log. Do what goes wrong, then right
 after:
 
