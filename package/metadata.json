@@ -12,7 +12,7 @@
         "Id": "com.dv.uswitcher",
         "Name": "USwitcher",
         "Version": "2.1.0",
-        "Website": "https://gitlab.com/divinae/uswitch/"
+        "Website": "https://github.com/divinae/uswitch"
     },
     "KPackageStructure": "Plasma/Applet",
     "X-Plasma-API-Minimum-Version": "6.0"
